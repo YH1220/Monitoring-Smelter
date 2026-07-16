@@ -3,200 +3,375 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Monitoring Smelter</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>National Smelter Emission Hub - 2045</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* Desain Dasar & Background Pattern */
+        /* --- TEMA DEFAULT (DARK MODE) --- */
+        :root {
+            --bg-main: #0b0f19;
+            --bg-card: #131a2e;
+            --border-tech: #1e294b;
+            --neon-blue: #38bdf8;
+            --neon-green: #34d399;
+            --neon-amber: #fbbf24;
+            --text-light: #f3f4f6;
+            --text-muted: #9ca3af;
+            --text-invert: #ffffff;
+            --param-bg: rgba(255, 255, 255, 0.02);
+            --map-filter: invert(1) sepia(1) hue-rotate(180deg) saturate(4) brightness(0.4) opacity(0.8);
+            --label-bg: rgba(11, 15, 25, 0.9);
+            --label-text: #ffffff;
+        }
+
+        /* --- PERUBAHAN VARIABEL UNTUK LIGHT MODE --- */
+        body.light-mode {
+            --bg-main: #f0f2f5;
+            --bg-card: #ffffff;
+            --border-tech: #cbd5e1;
+            --text-light: #1e293b;
+            --text-muted: #64748b;
+            --text-invert: #0f172a;
+            --param-bg: rgba(0, 0, 0, 0.03);
+            /* Mengubah peta menjadi abu-abu kebiruan yang bersih di latar terang */
+            --map-filter: invert(0.2) sepia(0.5) hue-rotate(190deg) saturate(1) brightness(0.9) opacity(0.4);
+            --label-bg: rgba(255, 255, 255, 0.95);
+            --label-text: #1e293b;
+        }
+
+        /* Efek Transisi Animasi Perpindahan Tema */
+        body, .card, .topbar, .param-box, .btn-back, .btn-theme, #regionName {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
         body {
             margin: 0;
             padding: 0;
             font-family: 'Inter', sans-serif;
-            background-color: #ffffff;
-            /* Pola titik-titik (dot pattern) seperti pada gambar */
-            background-image: radial-gradient(#d1d5db 1px, transparent 1px);
-            background-size: 24px 24px;
-            color: #111827;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            background-color: var(--bg-main);
+            color: var(--text-light);
+            overflow-x: hidden;
         }
 
-        /* --- HEADER --- */
-        .header {
+        /* Topbar */
+        .topbar {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-tech);
+            padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 40px;
-            background-color: rgba(255, 255, 255, 0.9);
-            border-bottom: 1px solid #f3f4f6;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
         }
-
-        .header-logos {
-            display: flex;
-            gap: 15px;
-        }
-
-        /* Placeholder untuk logo bulat (Bisa diganti tag <img> nantinya) */
-        .logo-img {
-    height: 40px; /* Menyesuaikan tinggi logo agar sejajar dengan teks */
-    width: auto;  /* Lebar akan menyesuaikan proporsi gambar asli */
-    object-fit: contain; /* Memastikan logo tidak gepeng/distorsi */
-    border-radius: 50%; /* Opsional: Hapus baris ini jika logo Anda BUKAN lingkaran */
-        }
-
-        /* Teks Logo Tengah (Gradasi Biru-Cyan) */
-        .header-title {
-            font-size: 32px;
-            font-weight: 800;
-            letter-spacing: 8px;
-            text-align: center;
-            /* Efek Gradasi Text */
-            background: linear-gradient(90deg, #1d4ed8, #06b6d4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 0;
-        }
-
-        /* Menu Hamburger */
-        .menu-icon {
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        .menu-icon span {
-            display: block;
-            width: 24px;
-            height: 2px;
-            background-color: #374151;
-            border-radius: 2px;
-        }
-
-        /* --- HERO SECTION (Konten Utama) --- */
-        .hero {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 40px 20px;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        /* Tipografi Judul */
-        .hero h1 {
-            font-size: 64px;
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 24px;
-            letter-spacing: -1px;
-        }
-        .text-blue { color: #1d4ed8; }
-        .text-green { color: #059669; }
-
-        /* Tipografi Deskripsi */
-        .hero p {
-            font-size: 18px;
-            color: #4b5563;
-            line-height: 1.6;
-            margin-bottom: 40px;
-            max-width: 700px;
-        }
-
-        /* --- BUTTONS --- */
-        .button-group {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .btn {
-            padding: 12px 28px;
-            border-radius: 9999px; /* Bentuk Kapsul/Pill */
-            font-size: 16px;
+        .topbar-left { display: flex; align-items: center; gap: 20px; }
+        .topbar-right { display: flex; align-items: center; gap: 10px; }
+        .topbar-brand { font-weight: 800; font-size: 18px; color: var(--neon-blue); letter-spacing: 2px; text-decoration: none; }
+        .era-badge { background: linear-gradient(90deg, #6366f1, #a855f7); color: white; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: 700; }
+        
+        /* Tombol Kontrol */
+        .btn-back, .btn-theme {
+            padding: 8px 16px;
+            background-color: transparent;
+            color: var(--text-light);
+            border: 1px solid var(--border-tech);
+            border-radius: 9999px;
+            text-decoration: none;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
+        }
+        .btn-back:hover, .btn-theme:hover { 
+            background-color: var(--param-bg); 
+            border-color: var(--neon-blue); 
+        }
+
+        /* Main Layout Grid */
+        .main-container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1.8fr 1.2fr;
+            gap: 25px;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-tech);
+            border-radius: 16px;
+            padding: 25px;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
-        /* Tombol Utama (Biru Solid) */
-        .btn-primary {
-            background-color: #1d4ed8;
-            color: white;
-            border: none;
-            box-shadow: 0 4px 6px rgba(29, 78, 216, 0.2);
-        }
-        .btn-primary:hover { background-color: #1e40af; }
-
-        /* Tombol Sekunder (Garis Tepi) */
-        .btn-outline {
-            background-color: #ffffff;
-            color: #374151;
-            border: 1px solid #d1d5db;
-        }
-        .btn-outline:hover {
-            background-color: #f9fafb;
-            border-color: #9ca3af;
+        /* Wadah Utama Peta */
+        .map-container {
+            height: 400px;
+            position: relative;
+            border-radius: 12px;
+            border: 1px solid var(--border-tech);
+            background-color: var(--bg-card);
+            overflow: hidden;
         }
 
-        /* Responsivitas untuk layar kecil */
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 42px; }
-            .header-title { font-size: 24px; letter-spacing: 4px; }
-            .header-logos .logo-circle:nth-child(3) { display: none; } /* Sembunyikan 1 logo di HP */
+        /* Layer Peta Indonesia */
+        .map-container::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/f/f8/Indonesia_blank_map.svg');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            filter: var(--map-filter);
+            z-index: 1;
+        }
+
+        /* Tanda Bulat (Pin) - Warna Asli Terisolasi & Aman */
+        .map-pin {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background-color: #38bdf8;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 0 8px #38bdf8;
+        }
+        .map-pin::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: inherit;
+            animation: pulse 2s infinite;
+            left: 0; top: 0;
+        }
+        .map-pin:hover { transform: scale(1.4); filter: brightness(1.2); }
+        .map-pin.active { background-color: #fbbf24; box-shadow: 0 0 15px #fbbf24; }
+        
+        /* Label teks nama daerah */
+        .pin-label {
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+            background: var(--label-bg);
+            color: var(--label-text);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid var(--border-tech);
+            pointer-events: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+
+        /* Parameter Grid */
+        .param-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .param-box {
+            background-color: var(--param-bg);
+            border: 1px solid var(--border-tech);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        .param-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; }
+        .param-value { font-size: 20px; font-weight: 700; color: var(--text-light); }
+        
+        /* Metrics */
+        .future-metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px dashed var(--border-tech);
+            font-size: 14px;
+        }
+        .future-metric:last-child { border-bottom: none; }
+
+        .status-pill { padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+        .status-pill.good { background-color: rgba(52, 211, 153, 0.1); color: #059669; }
+        body.light-mode .status-pill.good { background-color: rgba(52, 211, 153, 0.2); }
+
+        @media (max-width: 1024px) {
+            .main-container { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Bagian Header (Navigasi Atas) -->
-    <header class="header">
-        <div class="header-logos">
-            <!-- Ganti elemen ini dengan tag <img src="..."> dari logo perusahaan Anda -->
-            <img src="Lambang UGM.png" alt="Lambang" class="logo-img">
-            <img src="Logo POLIJE (Warna).png" alt="Logo" class="logo-img">
+    <!-- Navigasi Atas -->
+    <div class="topbar">
+        <div class="topbar-left">
+            <a class="topbar-brand">SINERO</a>
+            <div class="era-badge">MONITORING LIMBAH SMELTER MENUJU INDONESIA EMAS 2045</div>
         </div>
-        
-        <h2 class="header-title">SINERO</h2>
-        
-        <div class="menu-icon">
-            <span></span>
-            <span></span>
-            <span></span>
+        <div class="topbar-right">
+            <!-- TOMBOL TOGGLE THEME BARU -->
+            <button class="btn-theme" onclick="toggleTheme()">🌓 Toggle Theme</button>
+            <a href="Index.html" class="btn-back">Kembali ke Laman Utama</a>
         </div>
-    </header>
+    </div>
 
-    <!-- Bagian Hero (Konten Utama di Tengah) -->
-    <main class="hero">
-        <h1>
-            Monitoring <span class="text-blue">TEG Output</span><br>
-            dan <span class="text-green">CEMS Filtrasi</span>
-        </h1>
+    <!-- Container Konten -->
+    <div class="main-container">
         
-        <p>
-            Platform pemantauan komprehensif secara real-time untuk konversi energi panas 
-            sisa menjadi listrik dan kepatuhan batas baku mutu emisi gas buang industri berat.
-        </p>
+        <!-- Kolom Kiri: Peta Indonesia -->
+        <div class="card">
+            <h2 class="card-title">Pemetaan Smelter Nasional & Makro Emisi Real-time</h2>
+            <p style="color: var(--text-muted); font-size: 13px; margin-top: -15px; margin-bottom: 20px;">
+                Klik pada node geo-lokasi untuk menyinkronkan data emisi regional ke panel analisis analitik.
+            </p>
+            
+            <div class="map-container">
+                <!-- Pin Morowali -->
+                <div class="map-pin active" style="top: 50%; left: 58%;" onclick="selectRegion('Morowali', 145, 45, 310, '89%', '94.2%', 'Rp 1.4B/Bln')" id="pin-Morowali">
+                    <span class="pin-label">Morowali Hub IWIP</span>
+                </div>
+                
+                <!-- Pin Weda Bay -->
+                <div class="map-pin" style="top: 38%; left: 70%;" onclick="selectRegion('Weda Bay', 110, 32, 240, '92%', '97.5%', 'Rp 950M/Bln')" id="pin-Weda">
+                    <span class="pin-label">Weda Bay IMIP</span>
+                </div>
 
-        <div class="button-group">
-            <!-- Tombol ini bisa Anda arahkan link-nya ke file dashboard sebelumnya -->
-            <a href="dashboard-smelter.html" class="btn btn-primary">
-                Buka Simulassi <span>&rarr;</span>
-            </a>
-            <button class="btn btn-outline">Metodologi</button>
-            <a href="tentang-kami.html" class="btn btn-outline">Tentang Kami 
-            </a>
-            <a href="dashboard-nasional.html" class="btn btn-outline">Timeline 2045 
-            </a>
+                <!-- Pin Gresik -->
+                <div class="map-pin" style="top: 65%; left: 38%;" onclick="selectRegion('Gresik Copper', 85, 20, 185, '96%', '98.9%', 'Rp 420M/Bln')" id="pin-Gresik">
+                    <span class="pin-label">Freeport Gresik</span>
+                </div>
+
+                <!-- Pin Bangka Belitung -->
+                <div class="map-pin" style="top: 47%; left: 23%;" onclick="selectRegion('Bangka Tin', 60, 15, 120, '98%', '99.1%', 'Subsidi Hijau')" id="pin-Bangka">
+                    <span class="pin-label">Bangka Belitung</span>
+                </div>
+
+                <div class="map-pin" style="top: 55%; left: 58%;" onclick="selectRegion('Konawe Hub', 128, 23,344, '89%', '96.0%', 'Rp 4.6B/Bln')" id="pin-Konawe">
+                    <span class="pin-label">Virtue Dragon Nickel Industry</span>
+                </div>
+
+                <div class="map-pin" style="top: 60%; left: 54%;" onclick="selectRegion('Bantaeng Hub', 180, 55, 400, '82%', '91.0%', 'Rp 2.1B/Bln')" id="pin-Bantaeng">
+                    <span class="pin-label">Huadi Nickel-Alloy</span>
+                </div>
+            </div>
+            
+            <p style="font-size: 12px; color: #6366f1; margin-top: 15px; font-family: monospace;">
+                Data Kementerian Lingkungan Hidup & ESDM 2045.
+            </p>
         </div>
-    </main>
 
+        <!-- Kolom Kanan: Detail Analisis Makro Regional -->
+        <div class="card">
+            <h2 class="card-title" style="color: var(--neon-blue);">
+                 Regional Analytics: <span id="regionName" style="color: var(--text-invert);">Morowali Hub</span>
+            </h2>
+            
+            <div class="param-grid">
+                <div class="param-box" style="border-bottom: 3px solid #ff9800;">
+                    <div class="param-label">Paparan SO₂</div>
+                    <div class="param-value" id="valSO2">145 <span style="font-size:11px;">mg/Nm³</span></div>
+                </div>
+                <div class="param-box" style="border-bottom: 3px solid #38bdf8;">
+                    <div class="param-label">Paparan CO</div>
+                    <div class="param-value" id="valCO">45 <span style="font-size:11px;">ppm</span></div>
+                </div>
+                <div class="param-box" style="border-bottom: 3px solid #34d399;">
+                    <div class="param-label">Paparan CO₂</div>
+                    <div class="param-value" id="valCO2">310 <span style="font-size:11px;">ppm</span></div>
+                </div>
+            </div>
+
+            <h3 style="font-size: 14px; color: #059669; margin-top: 30px; text-transform: uppercase; letter-spacing: 1px;">
+                 Parameter Prediksi Net-Zero 
+            </h3>
+            
+            <div class="future-metric">
+                <span class="detail-label" style="color:var(--text-muted)">Indeks Kepatuhan Udara</span>
+                <span class="status-pill good" id="valCompliance">89% PASS</span>
+            </div>
+            <div class="future-metric">
+                <span class="detail-label" style="color:var(--text-muted)">Efisiensi TEG Quantum Nasional</span>
+                <span class="detail-value" id="valTegEff" style="font-weight: 600; color:var(--neon-blue)">94.2%</span>
+            </div>
+            <div class="future-metric">
+                <span class="detail-label" style="color:var(--text-muted)">Carbon Tax Net-Volume</span>
+                <span class="detail-value" id="valCarbonTax" style="font-weight: 600; color: var(--neon-amber)">Rp 1.4B/Bln</span>
+            </div>
+            <div class="future-metric">
+                <span class="detail-label" style="color:var(--text-muted)">Status CCUS (Carbon Capture)</span>
+                <span class="status-pill good" style="background-color:rgba(56,189,248,0.1); color:var(--neon-blue)">ACTIVE (99% Absorb)</span>
+            </div>
+            <div class="future-metric">
+                <span class="detail-label" style="color:var(--text-muted)">Kontribusi Grid Listrik Nasional</span>
+                <span class="detail-value" style="color: #a855f7; font-weight:600;">+24.5 GW/h</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script Interaktif Peta & Pengubah Tema -->
+    <script>
+        // --- LOGIKA TOGGLE THEME ---
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            
+            // Simpan status tema pilihan user ke local storage
+            if (document.body.classList.contains('light-mode')) {
+                localStorage.setItem('national-theme', 'light');
+            } else {
+                localStorage.setItem('national-theme', 'dark');
+            }
+        }
+
+        // Cek tema yang disimpan saat halaman pertama kali dimuat
+        if (localStorage.getItem('national-theme') === 'light') {
+            document.body.classList.add('light-mode');
+        }
+
+        // --- LOGIKA REGIONAL PETA ---
+        function selectRegion(name, so2, co, co2, compliance, tegEff, carbonTax) {
+            document.getElementById('regionName').innerText = name;
+            
+            document.getElementById('valSO2').innerHTML = `${so2} <span style="font-size:11px;">mg/Nm³</span>`;
+            document.getElementById('valCO').innerHTML = `${co} <span style="font-size:11px;">ppm</span>`;
+            document.getElementById('valCO2').innerHTML = `${co2} <span style="font-size:11px;">ppm</span>`;
+            
+            document.getElementById('valCompliance').innerText = `${compliance} PASS`;
+            document.getElementById('valTegEff').innerText = tegEff;
+            document.getElementById('valCarbonTax').innerText = carbonTax;
+
+            const pins = document.querySelectorAll('.map-pin');
+            pins.forEach(pin => pin.classList.remove('active'));
+            
+            if(name.includes('Morowali')) document.getElementById('pin-Morowali').classList.add('active');
+            if(name.includes('Weda')) document.getElementById('pin-Weda').classList.add('active');
+            if(name.includes('Gresik')) document.getElementById('pin-Gresik').classList.add('active');
+            if(name.includes('Bangka')) document.getElementById('pin-Bangka').classList.add('active');
+            if(name.includes('Bantaeng')) document.getElementById('pin-Bantaeng').classList.add('active');
+            if(name.includes('Konawe')) document.getElementById('pin-Konawe').classList.add('active');
+        }
+    </script>
 </body>
 </html>
